@@ -35,7 +35,7 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
-import { dashboard } from '@/routes';
+import { dashboard, home } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -48,18 +48,36 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const auth = computed(() => page.props.auth);
+const isAdmin = computed(() => Boolean(page.props.auth?.user?.is_admin));
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Home',
+            href: home(),
+            icon: BookOpen,
+        },
+        {
+            title: 'Games',
+            href: '/games',
+            icon: Folder,
+        },
+    ];
+
+    if (isAdmin.value) {
+        items.unshift({
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        });
+    }
+
+    return items;
+});
 
 const rightNavItems: NavItem[] = [
     {
@@ -146,7 +164,7 @@ const rightNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="dashboard()" class="flex items-center gap-x-2">
+                <Link :href="home()" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 

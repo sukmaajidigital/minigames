@@ -7,6 +7,7 @@ export type User = {
     google_id?: string | null;
     is_google_user?: boolean;
     has_password?: boolean;
+    is_admin?: boolean;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;

@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
                     'avatar' => $request->user()->avatar,
                     'is_google_user' => $request->user()->isGoogleUser(),
                     'has_password' => $request->user()->password !== null,
+                    'is_admin' => $request->user()->isAdmin(),
                 ]) : null,
             ],
             'flash' => [

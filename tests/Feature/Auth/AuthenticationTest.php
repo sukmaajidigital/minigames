@@ -2,12 +2,39 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
+use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Fortify\Features;
 
 test('login screen can be rendered', function () {
     $response = $this->get(route('login'));
 
+    $response
+        ->assertOk()
+        ->assertInertia(
+            fn (Assert $page) => $page
+                ->component('auth/Login'),
+        );
+});
+
+test('login screen has google sign in action for guests', function () {
+    $response = $this->get(route('login'));
+
     $response->assertOk();
+
+    expect(route('auth.google.redirect', absolute: false))->toBe('/auth/google/redirect');
+});
+
+test('register screen has google sign in action for guests', function () {
+    $response = $this->get(route('register'));
+
+    $response
+        ->assertOk()
+        ->assertInertia(
+            fn (Assert $page) => $page
+                ->component('auth/Register'),
+        );
+
+    expect(route('auth.google.redirect', absolute: false))->toBe('/auth/google/redirect');
 });
 
 test('users can authenticate using the login screen', function () {
@@ -19,7 +46,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('home', absolute: false));
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {

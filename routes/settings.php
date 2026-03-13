@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\HistoryController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('settings/history', [HistoryController::class, 'index'])->name('history.index');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

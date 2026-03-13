@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import { redirect as googleRedirect } from '@/routes/auth/google';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 </script>
@@ -21,7 +22,7 @@ import { store } from '@/routes/register';
 
         <div class="flex flex-col gap-6">
             <a
-                href="/auth/google/redirect"
+                :href="googleRedirect().url"
                 class="inline-flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
             >
                 <svg class="h-5 w-5" viewBox="0 0 24 24">

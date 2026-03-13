@@ -20,6 +20,10 @@ const sidebarNavItems: NavItem[] = [
         href: editSecurity(),
     },
     {
+        title: 'History',
+        href: '/settings/history',
+    },
+    {
         title: 'Appearance',
         href: editAppearance(),
     },

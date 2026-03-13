@@ -22,6 +22,18 @@ type Props = {
     status?: string;
     isGoogleUser: boolean;
     hasPassword: boolean;
+    playerStats: {
+        total_sessions: number;
+        best_score: number;
+        total_playtime_seconds: number;
+        global_rank: number | null;
+    };
+    recentSessions: Array<{
+        id: number;
+        game_title: string;
+        score: number;
+        played_at: string;
+    }>;
 };
 
 defineProps<Props>();
@@ -64,6 +76,13 @@ function onAvatarChange(event: Event) {
 
 function triggerAvatarInput() {
     avatarInput.value?.click();
+}
+
+function formatDuration(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remain = seconds % 60;
+
+    return `${minutes}m ${remain}s`;
 }
 
 onBeforeUnmount(clearAvatarPreview);
@@ -257,6 +276,74 @@ onBeforeUnmount(clearAvatarPreview);
                         >
                     </div>
                 </Form>
+
+                <div class="rounded-xl border border-border bg-card p-4">
+                    <h3 class="text-base font-medium">Statistik pemain</h3>
+                    <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                        <div class="rounded-lg bg-muted/50 p-3">
+                            <p class="text-xs text-muted-foreground uppercase">
+                                Total sesi
+                            </p>
+                            <p class="mt-1 text-xl font-semibold">
+                                {{ playerStats.total_sessions }}
+                            </p>
+                        </div>
+                        <div class="rounded-lg bg-muted/50 p-3">
+                            <p class="text-xs text-muted-foreground uppercase">
+                                Skor terbaik
+                            </p>
+                            <p class="mt-1 text-xl font-semibold">
+                                {{ playerStats.best_score }}
+                            </p>
+                        </div>
+                        <div class="rounded-lg bg-muted/50 p-3">
+                            <p class="text-xs text-muted-foreground uppercase">
+                                Total waktu bermain
+                            </p>
+                            <p class="mt-1 text-xl font-semibold">
+                                {{
+                                    formatDuration(
+                                        playerStats.total_playtime_seconds,
+                                    )
+                                }}
+                            </p>
+                        </div>
+                        <div class="rounded-lg bg-muted/50 p-3">
+                            <p class="text-xs text-muted-foreground uppercase">
+                                Rank global
+                            </p>
+                            <p class="mt-1 text-xl font-semibold">
+                                {{
+                                    playerStats.global_rank
+                                        ? `#${playerStats.global_rank}`
+                                        : '-'
+                                }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h4 class="text-sm font-medium">5 sesi terakhir</h4>
+                        <div
+                            v-if="recentSessions.length === 0"
+                            class="mt-2 text-sm text-muted-foreground"
+                        >
+                            Belum ada sesi permainan.
+                        </div>
+                        <ul v-else class="mt-2 space-y-1 text-sm">
+                            <li
+                                v-for="session in recentSessions"
+                                :key="session.id"
+                                class="flex items-center justify-between rounded-md border border-border px-3 py-2"
+                            >
+                                <span>{{ session.game_title }}</span>
+                                <span class="text-muted-foreground">
+                                    {{ session.score }} pts
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <DeleteUser />

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\GameSession;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,11 +21,40 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $bestScore = (int) ($user->gameSessions()->max('score') ?? 0);
+
+        $globalRank = null;
+        if ($bestScore > 0) {
+            $globalRank = GameSession::query()
+                ->selectRaw('user_id, MAX(score) as user_best')
+                ->groupBy('user_id')
+                ->havingRaw('MAX(score) > ?', [$bestScore])
+                ->count() + 1;
+        }
+
         return Inertia::render('settings/Profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
-            'isGoogleUser' => $request->user()->isGoogleUser(),
-            'hasPassword' => $request->user()->password !== null,
+            'isGoogleUser' => $user->isGoogleUser(),
+            'hasPassword' => $user->password !== null,
+            'playerStats' => [
+                'total_sessions' => (int) $user->gameSessions()->count(),
+                'best_score' => $bestScore,
+                'total_playtime_seconds' => (int) $user->gameSessions()->sum('duration_seconds'),
+                'global_rank' => $globalRank,
+            ],
+            'recentSessions' => $user->gameSessions()
+                ->with('game:id,slug,title')
+                ->latest('played_at')
+                ->limit(5)
+                ->get()
+                ->map(fn($session) => [
+                    'id' => $session->id,
+                    'game_title' => $session->game?->title ?? $session->game_slug,
+                    'score' => $session->score,
+                    'played_at' => $session->played_at,
+                ]),
         ]);
     }
 
