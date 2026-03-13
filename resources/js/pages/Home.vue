@@ -90,10 +90,19 @@ const schema = computed(() =>
                     <Button as-child>
                         <Link href="/games">Lihat semua game</Link>
                     </Button>
+                    <Button as-child variant="secondary">
+                        <Link href="/settings/profile">Profil</Link>
+                    </Button>
+                    <Button as-child variant="ghost">
+                        <Link href="/settings/history">Riwayat</Link>
+                    </Button>
                 </template>
                 <template v-else>
                     <Button as-child variant="outline">
                         <Link :href="login()">Masuk</Link>
+                    </Button>
+                    <Button as-child variant="ghost">
+                        <Link href="/admin/login">Admin login</Link>
                     </Button>
                     <Button as-child variant="secondary">
                         <a :href="googleRedirect().url">Login Google</a>

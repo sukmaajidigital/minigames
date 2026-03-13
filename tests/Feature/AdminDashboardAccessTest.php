@@ -2,6 +2,12 @@
 
 use App\Models\User;
 
+test('admin login entry redirects to login page', function () {
+    $response = $this->get(route('admin.login'));
+
+    $response->assertRedirect(route('login'));
+});
+
 test('guest is redirected when accessing admin dashboard', function () {
     $response = $this->get(route('dashboard'));
 

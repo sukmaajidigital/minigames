@@ -17,6 +17,7 @@ Route::get('/games/math', [MathGameController::class, 'show'])->name('games.math
 Route::get('/games/leaderboard', [GameController::class, 'leaderboard'])->name('games.leaderboard');
 Route::get('/players/{user}', [PlayerProfileController::class, 'show'])->name('players.show');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::redirect('/admin/login', '/login')->name('admin.login');
 
 // Google OAuth routes
 Route::middleware('guest')->group(function () {
